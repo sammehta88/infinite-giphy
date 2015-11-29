@@ -3,12 +3,15 @@ $(document).ready(init);
 function init() {
   $('#search button').on('click', function(evt) {
     evt.preventDefault();
+    $('#gif-container').empty();
+    $(window).scrollTop(0);
     var searchTerm = $('#keyword').val();
     searchTerm = searchTerm.replace(" ", "+");
     var page = 0;
     var pageLength = 10;
+    console.log('from click');
     giphyCall(searchTerm, page, pageLength);
-    scrollListener(searchTerm, page, pageLength);
+    addScrollListener(searchTerm, page, pageLength);
   });
 }
 
@@ -32,15 +35,22 @@ function giphyCall(keyword, page, pageLength){
 function appendGifs(gifs){
   gifs.data.forEach(function(gif){
     var image = gif.images.downsized.url || gif.images.original.url;
-    $('body').append('<img src="' + image + '" class="gif">');
+    $('#gif-container').append('<img src="' + image + '" class="gif">');
   });
 }
 
-function scrollListener(keyword, page, pageLength){
+function addScrollListener(keyword, page, pageLength){
+  $(window).off();
   var pageNum = page;
   $(window).on("scroll", function(){
-    if($(window).scrollTop() + $(window).height() == $(document).height()){
+    if($(window).scrollTop() !== 0 && $(window).scrollTop() + $(window).height() === $(document).height()){
+      console.log('scrolltop', $(window).scrollTop());
+      console.log('window height', $(window).height());
+      console.log('doc height', $(document).height());
       pageNum++;
+      console.log(pageNum);
+      console.log(pageLength);
+      console.log('from scroll');
       giphyCall(keyword, pageNum, pageLength);
     }
   });
